@@ -13,6 +13,8 @@ type ButtonProps = {
     iconRight?: boolean;
     iconMargin?: number;
     icon?: IconType;
+    roundedFull?: boolean;
+    makeTextABitBigger?: boolean;
     buttonRef?: LegacyRef<HTMLButtonElement> | undefined;
 } & React.DetailedHTMLProps<
     React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -31,6 +33,8 @@ export const Button: React.FC<ButtonProps> = ({
     className,
     iconMargin,
     buttonRef,
+    roundedFull,
+    makeTextABitBigger,
     ...props
 }) => {
     return (
@@ -49,7 +53,11 @@ export const Button: React.FC<ButtonProps> = ({
                     : "bg-black border-black text-white hover:bg-black/90"
             } focus:ring-2 ${
                 disabled && "opacity-40 disabled"
-            } focus:ring-border-blue-100 transition-all text-sm py-1.5 w-full rounded-lg border  ${className}`}
+            } focus:ring-border-blue-100 transition-all ${
+                makeTextABitBigger ? "text-smol" : "text-sm"
+            } py-1.5 w-full ${
+                roundedFull ? "rounded-full" : "rounded-lg"
+            } border  ${className}`}
             {...props}
         >
             {loading ? (

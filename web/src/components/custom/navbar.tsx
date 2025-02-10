@@ -7,7 +7,7 @@ interface NavbarProps {}
 export const Navbar: React.FC<NavbarProps> = ({}) => {
     const { data, loading } = useMeQuery();
     return (
-        <div className="py-1 border-b text-smol border-gray-200">
+        <div className="py-1 border-b border-dashed text-smol border-gray-200">
             <div className="max-w-[80rem] mx-auto flex items-center gap-x-5">
                 {!loading && data && data.me ? (
                     <p>
