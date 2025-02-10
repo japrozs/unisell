@@ -22,14 +22,19 @@ __decorate([
 ], Listing.prototype, "id", void 0);
 __decorate([
     (0, type_graphql_1.Field)(),
-    (0, typeorm_1.Column)({ default: "" }),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Listing.prototype, "title", void 0);
 __decorate([
     (0, type_graphql_1.Field)(),
-    (0, typeorm_1.Column)({ default: "" }),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Listing.prototype, "description", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(),
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Listing.prototype, "price", void 0);
 __decorate([
     (0, type_graphql_1.Field)(),
     (0, typeorm_1.Column)({ default: false }),

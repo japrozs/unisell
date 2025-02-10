@@ -41,9 +41,12 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
                     Help & Contact
                 </p>
                 <div className="flex items-center ml-auto mr-0 gap-x-5">
-                    <p className="hover:underline hover:text-primary-color cursor-pointer">
+                    <a
+                        href="/sell"
+                        className="hover:underline hover:text-primary-color cursor-pointer"
+                    >
                         Sell
-                    </p>
+                    </a>
                     <p className="hover:underline hover:text-primary-color cursor-pointer">
                         Watchlist
                     </p>

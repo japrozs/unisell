@@ -18,12 +18,16 @@ export class Listing extends BaseEntity {
     id: string;
 
     @Field()
-    @Column({ default: "" })
+    @Column()
     title: string;
 
     @Field()
-    @Column({ default: "" })
+    @Column()
     description: string;
+
+    @Field()
+    @Column()
+    price: string;
 
     @Field()
     @Column({ default: false })
