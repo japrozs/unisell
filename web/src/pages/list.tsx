@@ -2,18 +2,59 @@ import { Button } from "@/components/custom/button";
 import { InputField } from "@/components/custom/input-field";
 import { Navbar } from "@/components/custom/navbar";
 import { SearchBar } from "@/components/custom/search-bar";
+import { TextField } from "@/components/custom/text-field";
 import { Form, Formik } from "formik";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { FileWithPath, useDropzone } from "react-dropzone";
 import { FaPlus } from "react-icons/fa";
 import { GoPlus } from "react-icons/go";
 import { GrMoney } from "react-icons/gr";
-import { LuTableProperties } from "react-icons/lu";
+import { HiOutlineTrash } from "react-icons/hi";
+import { LuComputer, LuTableProperties } from "react-icons/lu";
 import { MdOutlineSubtitles } from "react-icons/md";
+import { RxCross2 } from "react-icons/rx";
 import { TbPencil, TbPhotoSquareRounded } from "react-icons/tb";
+import { toast } from "sonner";
 
 interface ListProps {}
 
 const List: React.FC<ListProps> = ({}) => {
+    const [selectedImages, setSelectedImages] = useState<File[]>([]);
+    const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
+
+    const handleMediaSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files) {
+            const newFiles = Array.from(event.target.files);
+            const newImages = newFiles.filter((file) =>
+                file.type.startsWith("image")
+            );
+            const newVideos = newFiles.filter((file) =>
+                file.type.startsWith("video")
+            );
+
+            // Check if we are exceeding the limit for images and videos
+            if (selectedImages.length + newImages.length > 15) {
+                console.error(
+                    "Error: You can only upload a maximum of 15 images."
+                );
+                toast.error("Please choose a maximum of 15 images.");
+                return;
+            }
+
+            if (selectedVideos.length + newVideos.length > 1) {
+                console.error(
+                    "Error: You can only upload a maximum of 1 video."
+                );
+                toast.error("Please choose a maximum of 1 video.");
+                return;
+            }
+
+            // Update selected images and videos state
+            setSelectedImages((prevImages) => [...prevImages, ...newImages]);
+            setSelectedVideos((prevVideos) => [...prevVideos, ...newVideos]);
+        }
+    };
+
     return (
         <div>
             <Navbar />
@@ -29,8 +70,10 @@ const List: React.FC<ListProps> = ({}) => {
                                 </p>
                                 <Formik
                                     initialValues={{
-                                        usernameOrEmail: "",
-                                        password: "",
+                                        title: "",
+                                        description: "",
+                                        price: "",
+                                        sellerLocation: "",
                                     }}
                                     onSubmit={async (values, { setErrors }) => {
                                         console.log(values);
@@ -43,6 +86,13 @@ const List: React.FC<ListProps> = ({}) => {
                                                 name="title"
                                                 placeholder="Brand New Air Jordan 5 Retro Grape 2013 Size US M 8.5 Grape-Ice Blue colorway"
                                                 label="Title (the more descriptive the better)"
+                                                fullWidth
+                                            />
+                                            <TextField
+                                                name="description"
+                                                placeholder="Write a detailed description of your item, describe features, colors, any defects, or things that buyer might want to know"
+                                                label="Description (the more descriptive the better)"
+                                                rows={5}
                                                 fullWidth
                                             />
                                             <hr className="my-3 border-t border-dashed border-gray-200" />
@@ -59,13 +109,14 @@ const List: React.FC<ListProps> = ({}) => {
                                                     item that might interest
                                                     potential buyers (for
                                                     example: size, brand,
-                                                    condition)
+                                                    condition). Minumum one
+                                                    property is required
                                                 </p>
                                             </div>
                                             <div className="flex items-center w-full gap-x-5">
                                                 <div className="w-full">
                                                     <InputField
-                                                        name="password"
+                                                        name="field-1"
                                                         placeholder="Condition"
                                                         label="Field"
                                                         fullWidth
@@ -73,17 +124,18 @@ const List: React.FC<ListProps> = ({}) => {
                                                 </div>
                                                 <div className="w-full">
                                                     <InputField
-                                                        name="password"
+                                                        name="value-1"
                                                         placeholder="Brand new with tags"
                                                         label="Value"
                                                         fullWidth
                                                     />
                                                 </div>
+                                                <HiOutlineTrash className="transition duration-75 text-gray-500 cursor-pointer self-end mb-4 hover:text-red-500 min-w-6 text-xl" />
                                             </div>
                                             <div className="flex items-center w-full gap-x-5">
                                                 <div className="w-full">
                                                     <InputField
-                                                        name="password"
+                                                        name="field-2"
                                                         placeholder="Size"
                                                         label="Field"
                                                         fullWidth
@@ -91,17 +143,18 @@ const List: React.FC<ListProps> = ({}) => {
                                                 </div>
                                                 <div className="w-full">
                                                     <InputField
-                                                        name="password"
+                                                        name="value-2"
                                                         placeholder="US 8.5/9"
                                                         label="Value"
                                                         fullWidth
                                                     />
                                                 </div>
+                                                <HiOutlineTrash className="transition duration-75 text-gray-500 cursor-pointer self-end mb-4 hover:text-red-500 min-w-6 text-xl" />
                                             </div>
                                             <div className="flex items-center w-full gap-x-5">
                                                 <div className="w-full">
                                                     <InputField
-                                                        name="password"
+                                                        name="field-3"
                                                         placeholder="Brand"
                                                         label="Field"
                                                         fullWidth
@@ -109,12 +162,13 @@ const List: React.FC<ListProps> = ({}) => {
                                                 </div>
                                                 <div className="w-full">
                                                     <InputField
-                                                        name="password"
+                                                        name="value-3"
                                                         placeholder="Jordan"
                                                         label="Field"
                                                         fullWidth
                                                     />
                                                 </div>
+                                                <HiOutlineTrash className="transition duration-75 text-gray-500 cursor-pointer self-end mb-4 hover:text-red-500 min-w-6 text-xl" />
                                             </div>
                                             <button
                                                 className={
@@ -126,18 +180,121 @@ const List: React.FC<ListProps> = ({}) => {
                                             </button>
                                             <hr className="my-3 border-t border-dashed border-gray-200" />
                                             <div>
-                                                <div className="flex items-center">
-                                                    <LuTableProperties className="text-blue-500 mr-2" />
-                                                    <p className="g-sans text-lg flex items-center">
-                                                        Photos & Videos
-                                                    </p>
+                                                <div className="flex items-start">
+                                                    <LuTableProperties className="mt-1 text-blue-500 mr-2" />
+                                                    <div>
+                                                        <p className="g-sans text-lg flex items-center">
+                                                            Photos & Videos
+                                                        </p>
+                                                        <p className="text-sm text-gray-700 mt-1">
+                                                            You can add up to 15
+                                                            photos and a
+                                                            1-minute video.
+                                                            Buyers want to see
+                                                            all details and
+                                                            angles.
+                                                        </p>
+                                                    </div>
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*, video/*"
+                                                        multiple
+                                                        max="16"
+                                                        onChange={
+                                                            handleMediaSelect
+                                                        }
+                                                        style={{
+                                                            display: "none",
+                                                        }}
+                                                        id="image-input"
+                                                    />
+                                                    <label
+                                                        htmlFor="image-input"
+                                                        className={
+                                                            "ml-auto cursor-pointer mr-0 transition duration-75 mt-3 flex text-primary-color hover:bg-blue-50/80 font-semibold py-1 px-1.5 rounded-md"
+                                                        }
+                                                    >
+                                                        <GoPlus className="mr-2 text-xl" />
+                                                        Add photos
+                                                    </label>
                                                 </div>
-                                                <p className="text-sm text-gray-700 mt-1">
-                                                    You can add up to 10 photos
-                                                    and a 1-minute video. Buyers
-                                                    want to see all details and
-                                                    angles.
-                                                </p>
+                                                {selectedImages.length > 0 && (
+                                                    <div className="flex flex-wrap mt-2">
+                                                        {selectedVideos.map(
+                                                            (video, index) => (
+                                                                <div
+                                                                    key={index}
+                                                                    className="relative m-1"
+                                                                >
+                                                                    <video
+                                                                        src={URL.createObjectURL(
+                                                                            video
+                                                                        )}
+                                                                        controls
+                                                                        className="w-auto h-44 border border-gray-200 object-cover rounded"
+                                                                    />
+                                                                    <button
+                                                                        onClick={() =>
+                                                                            setSelectedVideos(
+                                                                                (
+                                                                                    videos
+                                                                                ) =>
+                                                                                    videos.filter(
+                                                                                        (
+                                                                                            _,
+                                                                                            i
+                                                                                        ) =>
+                                                                                            i !==
+                                                                                            index
+                                                                                    )
+                                                                            )
+                                                                        }
+                                                                        className="absolute top-3 right-3 bg-white text-black hover:text-primary-color rounded-full p-0.5"
+                                                                    >
+                                                                        <RxCross2 className="text-lg" />
+                                                                    </button>
+                                                                </div>
+                                                            )
+                                                        )}
+
+                                                        {selectedImages.map(
+                                                            (image, index) => (
+                                                                <div
+                                                                    key={index}
+                                                                    className="relative m-1"
+                                                                >
+                                                                    <img
+                                                                        src={URL.createObjectURL(
+                                                                            image
+                                                                        )}
+                                                                        alt={`preview ${index}`}
+                                                                        className="w-auto h-44 border border-gray-200 object-cover rounded"
+                                                                    />
+                                                                    <button
+                                                                        onClick={() =>
+                                                                            setSelectedImages(
+                                                                                (
+                                                                                    images
+                                                                                ) =>
+                                                                                    images.filter(
+                                                                                        (
+                                                                                            _,
+                                                                                            i
+                                                                                        ) =>
+                                                                                            i !==
+                                                                                            index
+                                                                                    )
+                                                                            )
+                                                                        }
+                                                                        className="absolute top-3 right-3 bg-white text-black hover:text-primary-color rounded-full p-0.5"
+                                                                    >
+                                                                        <RxCross2 className="text-lg" />
+                                                                    </button>
+                                                                </div>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                )}
                                             </div>
                                             <hr className="my-3 border-t border-dashed border-gray-200" />
                                             <InputField
