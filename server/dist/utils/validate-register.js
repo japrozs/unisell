@@ -48,7 +48,7 @@ const validateRegister = (options) => {
         return [
             {
                 field: "email",
-                message: "Invalid email",
+                message: "Invalid email – .edu emails only",
             },
         ];
     }

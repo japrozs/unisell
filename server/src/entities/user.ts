@@ -5,9 +5,11 @@ import {
     Column,
     CreateDateColumn,
     Entity,
+    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
+import { Listing } from "./listing";
 
 @ObjectType()
 @Entity()
@@ -47,6 +49,10 @@ export class User extends BaseEntity {
 
     @Column()
     password!: string;
+
+    @Field(() => [Listing])
+    @OneToMany(() => Listing, (listing) => listing.creator)
+    listings: Listing[];
 
     @Field(() => String)
     @CreateDateColumn()

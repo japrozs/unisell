@@ -17,6 +17,7 @@ const typeorm_1 = require("typeorm");
 const constants_1 = require("./constants");
 const user_1 = require("./entities/user");
 const user_resolver_1 = require("./resolvers/user-resolver");
+const listing_1 = require("./entities/listing");
 const main = async () => {
     const conn = await (0, typeorm_1.createConnection)({
         type: "postgres",
@@ -24,7 +25,7 @@ const main = async () => {
         logging: true,
         synchronize: true,
         migrations: [path_1.default.join(__dirname, "./migrations/*")],
-        entities: [user_1.User],
+        entities: [user_1.User, listing_1.Listing],
     });
     await conn.runMigrations();
     const app = (0, express_1.default)();

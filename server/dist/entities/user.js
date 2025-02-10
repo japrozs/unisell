@@ -13,6 +13,7 @@ exports.User = void 0;
 const constants_1 = require("../constants");
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
+const listing_1 = require("./listing");
 let User = class User extends typeorm_1.BaseEntity {
 };
 __decorate([
@@ -51,6 +52,11 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(() => [listing_1.Listing]),
+    (0, typeorm_1.OneToMany)(() => listing_1.Listing, (listing) => listing.creator),
+    __metadata("design:type", Array)
+], User.prototype, "listings", void 0);
 __decorate([
     (0, type_graphql_1.Field)(() => String),
     (0, typeorm_1.CreateDateColumn)(),
