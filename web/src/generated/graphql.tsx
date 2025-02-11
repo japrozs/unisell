@@ -72,7 +72,13 @@ export type MutationRegisterArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  getListing: Listing;
   me?: Maybe<User>;
+};
+
+
+export type QueryGetListingArgs = {
+  id: Scalars['String']['input'];
 };
 
 export type User = {
@@ -123,6 +129,13 @@ export type RegisterMutationVariables = Exact<{
 
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename: 'User', id: number, name: string, username: string, email: string, bio: string, avatar: string, createdAt: string, updatedAt: string } | null } };
+
+export type GetListingQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type GetListingQuery = { __typename?: 'Query', getListing: { __typename: 'Listing', id: string, title: string, description: string, properties: string, attachments: Array<string>, price: string, sellerLocation: string, sold: boolean, creatorId: string, createdAt: string, updatedAt: string, creator: { __typename: 'User', id: number, name: string, username: string, email: string, bio: string, avatar: string, createdAt: string, updatedAt: string } } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -242,6 +255,50 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const GetListingDocument = gql`
+    query GetListing($id: String!) {
+  getListing(id: $id) {
+    ...RegularListing
+    creator {
+      ...RegularUser
+    }
+  }
+}
+    ${RegularListingFragmentDoc}
+${RegularUserFragmentDoc}`;
+
+/**
+ * __useGetListingQuery__
+ *
+ * To run a query within a React component, call `useGetListingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetListingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetListingQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetListingQuery(baseOptions: Apollo.QueryHookOptions<GetListingQuery, GetListingQueryVariables> & ({ variables: GetListingQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetListingQuery, GetListingQueryVariables>(GetListingDocument, options);
+      }
+export function useGetListingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetListingQuery, GetListingQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetListingQuery, GetListingQueryVariables>(GetListingDocument, options);
+        }
+export function useGetListingSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetListingQuery, GetListingQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetListingQuery, GetListingQueryVariables>(GetListingDocument, options);
+        }
+export type GetListingQueryHookResult = ReturnType<typeof useGetListingQuery>;
+export type GetListingLazyQueryHookResult = ReturnType<typeof useGetListingLazyQuery>;
+export type GetListingSuspenseQueryHookResult = ReturnType<typeof useGetListingSuspenseQuery>;
+export type GetListingQueryResult = Apollo.QueryResult<GetListingQuery, GetListingQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {

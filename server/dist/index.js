@@ -19,6 +19,7 @@ const user_1 = require("./entities/user");
 const user_resolver_1 = require("./resolvers/user-resolver");
 const listing_1 = require("./entities/listing");
 const upload_1 = __importDefault(require("./upload"));
+const listing_resolver_1 = require("./resolvers/listing-resolver");
 const main = async () => {
     const conn = await (0, typeorm_1.createConnection)({
         type: "postgres",
@@ -56,7 +57,7 @@ const main = async () => {
     }));
     const apolloServer = new apollo_server_express_1.ApolloServer({
         schema: await (0, type_graphql_1.buildSchema)({
-            resolvers: [user_resolver_1.UserResolver],
+            resolvers: [user_resolver_1.UserResolver, listing_resolver_1.ListingResolver],
             validate: false,
         }),
         context: ({ req, res }) => ({

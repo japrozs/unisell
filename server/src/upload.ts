@@ -55,24 +55,27 @@ router.post(
             return path.join("uploads/", file.filename);
         });
 
-        if (req.body.title.trim().length === 0) {
+        if (!req.body.title || req.body.title.trim().length === 0) {
             res.status(200).json({ message: "Title cannot be empty" });
             return;
         }
-        if (req.body.description.trim().length === 0) {
+        if (!req.body.description || req.body.description.trim().length === 0) {
             res.status(200).json({ message: "Description cannot be empty" });
             return;
         }
-        if (req.body.price.trim().length === 0) {
+        if (!req.body.price || req.body.price.trim().length === 0) {
             res.status(200).json({ message: "Price cannot be empty" });
             return;
         }
-        if (req.body.sellerLocation.trim().length === 0) {
+        if (
+            !req.body.sellerLocation ||
+            req.body.sellerLocation.trim().length === 0
+        ) {
             res.status(200).json({
                 message: "Seller Location cannot be empty",
             });
         }
-        if (req.body.Properties.trim().length === 0) {
+        if (!req.body.properties || req.body.properties.trim().length === 0) {
             res.status(200).json({
                 message: "A mininum of one property is required",
             });

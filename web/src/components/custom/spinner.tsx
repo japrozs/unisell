@@ -12,7 +12,7 @@ export const Spinner: React.FC<SpinnerProps> = ({ className }) => {
                 className={`${
                     className
                         ? className
-                        : "w-8 h-8 text-gray-200 fill-green-main"
+                        : "w-8 h-8 text-gray-200 fill-primary-color"
                 } animate-spin`}
                 viewBox="0 0 100 101"
                 fill="none"

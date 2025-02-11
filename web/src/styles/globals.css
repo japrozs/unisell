@@ -250,6 +250,10 @@
     font-family: "google-sans";
 }
 
+.menlo {
+    font-family: "Menlo";
+}
+
 * {
     margin: 0;
     padding: 0;
