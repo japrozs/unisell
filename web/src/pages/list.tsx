@@ -3,7 +3,10 @@ import { InputField } from "@/components/custom/input-field";
 import { Navbar } from "@/components/custom/navbar";
 import { SearchBar } from "@/components/custom/search-bar";
 import { TextField } from "@/components/custom/text-field";
+import { useApolloClient } from "@apollo/client";
+import Axios from "axios";
 import { Form, Formik } from "formik";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FileWithPath, useDropzone } from "react-dropzone";
 import { FaPlus } from "react-icons/fa";
@@ -17,10 +20,21 @@ import { TbPencil, TbPhotoSquareRounded } from "react-icons/tb";
 import { toast } from "sonner";
 
 interface ListProps {}
+interface Property {
+    field: string;
+    value: string;
+    id: string;
+}
 
 const List: React.FC<ListProps> = ({}) => {
     const [selectedImages, setSelectedImages] = useState<File[]>([]);
     const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
+    const [properties, setProperties] = useState<Property[]>([
+        { field: "Condition", value: "Brand new in box", id: "1" },
+        { field: "Brand", value: "Nike", id: "2" },
+    ]);
+    const router = useRouter();
+    const client = useApolloClient();
 
     const handleMediaSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -55,6 +69,40 @@ const List: React.FC<ListProps> = ({}) => {
         }
     };
 
+    const addProperty = () => {
+        if (properties.length >= 10) {
+            toast.error("Maximum of 10 properties allowed");
+            return;
+        }
+
+        const newProperty: Property = {
+            field: "",
+            value: "",
+            id: `${properties.length + 1}`,
+        };
+        setProperties([...properties, newProperty]);
+    };
+
+    const removeProperty = (propertyId: string) => {
+        if (properties.length <= 1) {
+            toast.error("At least one property is required");
+            return;
+        }
+        setProperties(properties.filter((prop) => prop.id !== propertyId));
+    };
+
+    const handlePropertyChange = (
+        propertyId: string,
+        field: "field" | "value",
+        value: string
+    ) => {
+        setProperties(
+            properties.map((prop) =>
+                prop.id === propertyId ? { ...prop, [field]: value } : prop
+            )
+        );
+    };
+
     return (
         <div>
             <Navbar />
@@ -77,10 +125,69 @@ const List: React.FC<ListProps> = ({}) => {
                                     }}
                                     onSubmit={async (values, { setErrors }) => {
                                         console.log(values);
+
+                                        const formData = new FormData();
+                                        formData.append("title", values.title);
+                                        formData.append(
+                                            "description",
+                                            values.description
+                                        );
+                                        formData.append(
+                                            "properties",
+                                            JSON.stringify({ properties })
+                                        );
+                                        formData.append("price", values.price);
+                                        formData.append(
+                                            "sellerLocation",
+                                            values.sellerLocation
+                                        );
+
+                                        selectedImages.forEach((image) => {
+                                            formData.append("files", image);
+                                        });
+                                        selectedVideos.forEach((video) => {
+                                            formData.append("files", video);
+                                        });
+
+                                        console.log("formData :: ", formData);
+
+                                        try {
+                                            const res = await Axios.post(
+                                                `${process.env.NEXT_PUBLIC_API_URL}/upload/post`,
+                                                formData,
+                                                {
+                                                    headers: {
+                                                        "Content-Type":
+                                                            "multipart/form-data",
+                                                    },
+                                                    withCredentials: true,
+                                                }
+                                            );
+
+                                            console.log(
+                                                "response :: ",
+                                                res.data
+                                            );
+
+                                            if (res.data.message) {
+                                                // an error occured
+                                                toast.error("An error occured");
+                                            } else {
+                                                console.log(
+                                                    "res.data :: ",
+                                                    res.data
+                                                );
+                                                router.push(`/sell`);
+                                                await client.resetStore();
+                                            }
+                                        } catch (err) {
+                                            console.log(err);
+                                        }
+
                                         // setErrors();
                                     }}
                                 >
-                                    {({ isSubmitting }) => (
+                                    {({ values, isSubmitting }) => (
                                         <Form className="w-full">
                                             <InputField
                                                 name="title"
@@ -113,67 +220,65 @@ const List: React.FC<ListProps> = ({}) => {
                                                     property is required
                                                 </p>
                                             </div>
-                                            <div className="flex items-center w-full gap-x-5">
-                                                <div className="w-full">
-                                                    <InputField
-                                                        name="field-1"
-                                                        placeholder="Condition"
-                                                        label="Field"
-                                                        fullWidth
+                                            {properties.map((property) => (
+                                                <div
+                                                    key={property.id}
+                                                    className="flex items-center w-full gap-x-5"
+                                                >
+                                                    <div className="w-full">
+                                                        <InputField
+                                                            name={`field-${property.id}`}
+                                                            placeholder="Condition"
+                                                            label="Field"
+                                                            fullWidth
+                                                            value={
+                                                                property.field
+                                                            }
+                                                            onChange={(e) =>
+                                                                handlePropertyChange(
+                                                                    property.id,
+                                                                    "field",
+                                                                    e.target
+                                                                        .value
+                                                                )
+                                                            }
+                                                        />
+                                                    </div>
+                                                    <div className="w-full">
+                                                        <InputField
+                                                            name={`value-${property.id}`}
+                                                            placeholder="Brand new with tags"
+                                                            label="Value"
+                                                            fullWidth
+                                                            value={
+                                                                property.value
+                                                            }
+                                                            onChange={(e) =>
+                                                                handlePropertyChange(
+                                                                    property.id,
+                                                                    "value",
+                                                                    e.target
+                                                                        .value
+                                                                )
+                                                            }
+                                                        />
+                                                    </div>
+                                                    <HiOutlineTrash
+                                                        onClick={() =>
+                                                            removeProperty(
+                                                                property.id
+                                                            )
+                                                        }
+                                                        className="transition duration-75 text-gray-500 cursor-pointer self-end mb-4 hover:text-red-500 min-w-6 text-xl"
                                                     />
                                                 </div>
-                                                <div className="w-full">
-                                                    <InputField
-                                                        name="value-1"
-                                                        placeholder="Brand new with tags"
-                                                        label="Value"
-                                                        fullWidth
-                                                    />
-                                                </div>
-                                                <HiOutlineTrash className="transition duration-75 text-gray-500 cursor-pointer self-end mb-4 hover:text-red-500 min-w-6 text-xl" />
-                                            </div>
-                                            <div className="flex items-center w-full gap-x-5">
-                                                <div className="w-full">
-                                                    <InputField
-                                                        name="field-2"
-                                                        placeholder="Size"
-                                                        label="Field"
-                                                        fullWidth
-                                                    />
-                                                </div>
-                                                <div className="w-full">
-                                                    <InputField
-                                                        name="value-2"
-                                                        placeholder="US 8.5/9"
-                                                        label="Value"
-                                                        fullWidth
-                                                    />
-                                                </div>
-                                                <HiOutlineTrash className="transition duration-75 text-gray-500 cursor-pointer self-end mb-4 hover:text-red-500 min-w-6 text-xl" />
-                                            </div>
-                                            <div className="flex items-center w-full gap-x-5">
-                                                <div className="w-full">
-                                                    <InputField
-                                                        name="field-3"
-                                                        placeholder="Brand"
-                                                        label="Field"
-                                                        fullWidth
-                                                    />
-                                                </div>
-                                                <div className="w-full">
-                                                    <InputField
-                                                        name="value-3"
-                                                        placeholder="Jordan"
-                                                        label="Field"
-                                                        fullWidth
-                                                    />
-                                                </div>
-                                                <HiOutlineTrash className="transition duration-75 text-gray-500 cursor-pointer self-end mb-4 hover:text-red-500 min-w-6 text-xl" />
-                                            </div>
+                                            ))}
                                             <button
                                                 className={
                                                     "ml-auto mr-0 transition duration-75 mt-3 flex text-primary-color hover:bg-blue-50/80 font-semibold py-1 px-1.5 rounded-md"
                                                 }
+                                                type="button"
+                                                onClick={addProperty}
                                             >
                                                 <GoPlus className="mr-2 text-xl" />
                                                 Add property
@@ -324,6 +429,16 @@ const List: React.FC<ListProps> = ({}) => {
                                             <div className="flex items-center ml-auto mr-0 max-w-44">
                                                 <Button
                                                     loading={isSubmitting}
+                                                    disabled={
+                                                        values.title.trim()
+                                                            .length === 0 ||
+                                                        values.description.trim()
+                                                            .length === 0 ||
+                                                        values.price.trim()
+                                                            .length === 0 ||
+                                                        values.sellerLocation.trim()
+                                                            .length === 0
+                                                    }
                                                     colored
                                                     roundedFull
                                                     makeTextABitBigger

@@ -23,6 +23,22 @@ export type FieldError = {
   message: Scalars['String']['output'];
 };
 
+export type Listing = {
+  __typename?: 'Listing';
+  attachments: Array<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
+  creator: User;
+  creatorId: Scalars['String']['output'];
+  description: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  price: Scalars['String']['output'];
+  properties: Scalars['String']['output'];
+  sellerLocation: Scalars['String']['output'];
+  sold: Scalars['Boolean']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   changePassword: UserResponse;
@@ -66,6 +82,7 @@ export type User = {
   createdAt: Scalars['String']['output'];
   email: Scalars['String']['output'];
   id: Scalars['Float']['output'];
+  listings: Array<Listing>;
   name: Scalars['String']['output'];
   updatedAt: Scalars['String']['output'];
   username: Scalars['String']['output'];
@@ -85,6 +102,8 @@ export type UserResponse = {
 };
 
 export type RegularErrorFragment = { __typename?: 'FieldError', field: string, message: string };
+
+export type RegularListingFragment = { __typename: 'Listing', id: string, title: string, description: string, properties: string, attachments: Array<string>, price: string, sellerLocation: string, sold: boolean, creatorId: string, createdAt: string, updatedAt: string };
 
 export type RegularUserResponseFragment = { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename: 'User', id: number, name: string, username: string, email: string, bio: string, avatar: string, createdAt: string, updatedAt: string } | null };
 
@@ -108,8 +127,24 @@ export type RegisterMutation = { __typename?: 'Mutation', register: { __typename
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename: 'User', id: number, name: string, username: string, email: string, bio: string, avatar: string, createdAt: string, updatedAt: string } | null };
+export type MeQuery = { __typename?: 'Query', me?: { __typename: 'User', id: number, name: string, username: string, email: string, bio: string, avatar: string, createdAt: string, updatedAt: string, listings: Array<{ __typename: 'Listing', id: string, title: string, description: string, properties: string, attachments: Array<string>, price: string, sellerLocation: string, sold: boolean, creatorId: string, createdAt: string, updatedAt: string }> } | null };
 
+export const RegularListingFragmentDoc = gql`
+    fragment RegularListing on Listing {
+  id
+  title
+  description
+  properties
+  attachments
+  price
+  sellerLocation
+  sold
+  creatorId
+  createdAt
+  updatedAt
+  __typename
+}
+    `;
 export const RegularErrorFragmentDoc = gql`
     fragment RegularError on FieldError {
   field
@@ -211,9 +246,13 @@ export const MeDocument = gql`
     query Me {
   me {
     ...RegularUser
+    listings {
+      ...RegularListing
+    }
   }
 }
-    ${RegularUserFragmentDoc}`;
+    ${RegularUserFragmentDoc}
+${RegularListingFragmentDoc}`;
 
 /**
  * __useMeQuery__

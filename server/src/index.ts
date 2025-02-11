@@ -13,6 +13,7 @@ import { COOKIE_NAME, __prod__ } from "./constants";
 import { User } from "./entities/user";
 import { UserResolver } from "./resolvers/user-resolver";
 import { Listing } from "./entities/listing";
+import upload from "./upload";
 
 const main = async () => {
     const conn = await createConnection({
@@ -75,6 +76,9 @@ const main = async () => {
         app,
         cors: false,
     });
+
+    app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+    app.use("/upload/", upload);
 
     // @ts-ignore
     app.get("/is-auth", async (req, res) => {

@@ -34,7 +34,22 @@ __decorate([
     (0, type_graphql_1.Field)(),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
+], Listing.prototype, "properties", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(() => [String]),
+    (0, typeorm_1.Column)("json", { default: [] }),
+    __metadata("design:type", Array)
+], Listing.prototype, "attachments", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(),
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
 ], Listing.prototype, "price", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(),
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Listing.prototype, "sellerLocation", void 0);
 __decorate([
     (0, type_graphql_1.Field)(),
     (0, typeorm_1.Column)({ default: false }),

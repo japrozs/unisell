@@ -18,6 +18,7 @@ const constants_1 = require("./constants");
 const user_1 = require("./entities/user");
 const user_resolver_1 = require("./resolvers/user-resolver");
 const listing_1 = require("./entities/listing");
+const upload_1 = __importDefault(require("./upload"));
 const main = async () => {
     const conn = await (0, typeorm_1.createConnection)({
         type: "postgres",
@@ -68,6 +69,8 @@ const main = async () => {
         app,
         cors: false,
     });
+    app.use("/uploads", express_1.default.static(path_1.default.join(__dirname, "../uploads")));
+    app.use("/upload/", upload_1.default);
     app.get("/is-auth", async (req, res) => {
         const uid = req.session.userId;
         if (!uid) {

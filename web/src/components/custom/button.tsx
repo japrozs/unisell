@@ -49,7 +49,7 @@ export const Button: React.FC<ButtonProps> = ({
                           color
                               ? color
                               : "bg-primary-color border-primary-color text-white"
-                      } hover:opacity-90`
+                      } ${!disabled && "hover:opacity-90"}`
                     : "bg-black border-black text-white hover:bg-black/90"
             } focus:ring-2 ${
                 disabled && "opacity-40 disabled"

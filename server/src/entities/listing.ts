@@ -27,7 +27,19 @@ export class Listing extends BaseEntity {
 
     @Field()
     @Column()
+    properties: string;
+
+    @Field(() => [String])
+    @Column("json", { default: [] })
+    attachments: string[];
+
+    @Field()
+    @Column()
     price: string;
+
+    @Field()
+    @Column()
+    sellerLocation: string;
 
     @Field()
     @Column({ default: false })

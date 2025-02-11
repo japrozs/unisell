@@ -1,0 +1,14 @@
+fragment RegularListing on Listing {
+    id
+    title
+    description
+    properties
+    attachments
+    price
+    sellerLocation
+    sold
+    creatorId
+    createdAt
+    updatedAt
+    __typename
+}

@@ -113,7 +113,7 @@ let UserResolver = class UserResolver {
         if (!req.session.userId) {
             return null;
         }
-        return user_1.User.findOne(req.session.userId);
+        return user_1.User.findOne(req.session.userId, { relations: ["listings"] });
     }
     async register(options, { req }) {
         const errors = (0, validate_register_1.validateRegister)(options);
